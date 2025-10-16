@@ -7,7 +7,7 @@ interface OnboardingLayoutProps {
 }
 
 const OnboardingLayout = ({ children, currentStep }: OnboardingLayoutProps) => {
-  const totalSteps = 4;
+  const totalSteps = 6;
   const progress = (currentStep / totalSteps) * 100;
 
   return (

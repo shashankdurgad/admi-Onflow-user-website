@@ -5,7 +5,7 @@ import OnboardingLayout from "@/components/onboarding/OnboardingLayout";
 
 const Complete = () => {
   return (
-    <OnboardingLayout currentStep={4}>
+    <OnboardingLayout currentStep={6}>
       <div className="text-center max-w-2xl mx-auto animate-fade-in">
         <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-primary/10 mb-8 animate-scale-in">
           <CheckCircle className="h-12 w-12 text-primary" />

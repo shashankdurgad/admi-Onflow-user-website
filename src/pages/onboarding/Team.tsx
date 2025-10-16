@@ -74,7 +74,7 @@ const Team = () => {
         </div>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Link to="/onboarding/complete">
+          <Link to="/onboarding/terms">
             <Button 
               variant="outline" 
               size="lg" 
@@ -83,7 +83,7 @@ const Team = () => {
               Skip for now
             </Button>
           </Link>
-          <Link to="/onboarding/complete">
+          <Link to="/onboarding/terms">
             <Button 
               size="lg" 
               className="text-base px-8 py-6 shadow-lg hover:shadow-xl transition-all duration-300"

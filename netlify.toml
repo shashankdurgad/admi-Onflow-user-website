@@ -1,8 +1,0 @@
-SECRETS_SCAN_OMIT_PATHS = "dist/assets/*.js,dist/assets/*.css"
-[build]
-  command = "npm run build"
-  publish = "dist"
-
-[environment]
-  VITE_SUPABASE_URL = "safe"
-  VITE_SUPABASE_ANON_KEY = "safe"

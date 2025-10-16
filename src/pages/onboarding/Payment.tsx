@@ -1,15 +1,42 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { CreditCard, Lock, ArrowRight } from "lucide-react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import OnboardingLayout from "@/components/onboarding/OnboardingLayout";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+
+const formSchema = z.object({
+  cardName: z.string().min(1, "Cardholder name is required"),
+  cardNumber: z.string().min(16, "Card number must be at least 16 digits").max(19, "Invalid card number"),
+  expiry: z.string().regex(/^(0[1-9]|1[0-2])\/\d{2}$/, "Format must be MM/YY"),
+  cvv: z.string().min(3, "CVV must be 3 digits").max(4, "CVV must be 3-4 digits"),
+  billingAddress: z.string().min(1, "Billing address is required"),
+});
 
 const Payment = () => {
   const [plan, setPlan] = useState("pro");
+  const navigate = useNavigate();
+  
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    mode: "onChange",
+    defaultValues: {
+      cardName: "",
+      cardNumber: "",
+      expiry: "",
+      cvv: "",
+      billingAddress: "",
+    },
+  });
+
+  const onSubmit = (values: z.infer<typeof formSchema>) => {
+    navigate("/onboarding/complete");
+  };
 
   return (
     <OnboardingLayout currentStep={5}>
@@ -89,82 +116,111 @@ const Payment = () => {
         </div>
 
         {/* Payment Form */}
-        <Card className="p-8 max-w-2xl mx-auto">
-          <div className="flex items-center gap-2 mb-6">
-            <CreditCard className="h-5 w-5 text-primary" />
-            <h2 className="text-2xl font-bold">Payment details</h2>
-          </div>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)}>
+            <Card className="p-8 max-w-2xl mx-auto">
+              <div className="flex items-center gap-2 mb-6">
+                <CreditCard className="h-5 w-5 text-primary" />
+                <h2 className="text-2xl font-bold">Payment details</h2>
+              </div>
 
-          <div className="space-y-6">
-            <div>
-              <Label htmlFor="cardName">Cardholder name</Label>
-              <Input 
-                id="cardName"
-                placeholder="John Doe"
-                className="mt-2"
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="cardNumber">Card number</Label>
-              <Input 
-                id="cardNumber"
-                placeholder="1234 5678 9012 3456"
-                className="mt-2"
-              />
-            </div>
-
-            <div className="grid md:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="expiry">Expiry date</Label>
-                <Input 
-                  id="expiry"
-                  placeholder="MM/YY"
-                  className="mt-2"
+              <div className="space-y-6">
+                <FormField
+                  control={form.control}
+                  name="cardName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Cardholder name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="John Doe" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
-              </div>
-              <div>
-                <Label htmlFor="cvv">CVV</Label>
-                <Input 
-                  id="cvv"
-                  placeholder="123"
-                  type="password"
-                  className="mt-2"
+
+                <FormField
+                  control={form.control}
+                  name="cardNumber"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Card number</FormLabel>
+                      <FormControl>
+                        <Input placeholder="1234 5678 9012 3456" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
+
+                <div className="grid md:grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="expiry"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Expiry date</FormLabel>
+                        <FormControl>
+                          <Input placeholder="MM/YY" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  
+                  <FormField
+                    control={form.control}
+                    name="cvv"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>CVV</FormLabel>
+                        <FormControl>
+                          <Input placeholder="123" type="password" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <FormField
+                  control={form.control}
+                  name="billingAddress"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Billing address</FormLabel>
+                      <FormControl>
+                        <Input placeholder="123 Main St, City, Country" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <div className="bg-accent/50 rounded-lg p-4 flex items-start gap-3">
+                  <Lock className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+                  <div className="text-sm">
+                    <p className="font-medium mb-1">Secure payment</p>
+                    <p className="text-muted-foreground">
+                      Your payment information is encrypted and secure. We never store your card details.
+                    </p>
+                  </div>
+                </div>
               </div>
-            </div>
+            </Card>
 
-            <div>
-              <Label htmlFor="billingAddress">Billing address</Label>
-              <Input 
-                id="billingAddress"
-                placeholder="123 Main St, City, Country"
-                className="mt-2"
-              />
+            <div className="flex justify-center mt-8">
+              <Button 
+                type="submit"
+                size="lg"
+                className="text-lg px-8 py-6 shadow-lg hover:shadow-xl transition-all duration-300"
+                disabled={!form.formState.isValid}
+              >
+                Complete setup <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
             </div>
-
-            <div className="bg-accent/50 rounded-lg p-4 flex items-start gap-3">
-              <Lock className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
-              <div className="text-sm">
-                <p className="font-medium mb-1">Secure payment</p>
-                <p className="text-muted-foreground">
-                  Your payment information is encrypted and secure. We never store your card details.
-                </p>
-              </div>
-            </div>
-          </div>
-        </Card>
-
-        <div className="flex justify-center mt-8">
-          <Link to="/onboarding/complete">
-            <Button 
-              size="lg"
-              className="text-lg px-8 py-6 shadow-lg hover:shadow-xl transition-all duration-300"
-            >
-              Complete setup <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-          </Link>
-        </div>
+          </form>
+        </Form>
       </div>
     </OnboardingLayout>
   );
